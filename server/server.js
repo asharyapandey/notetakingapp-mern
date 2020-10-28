@@ -9,6 +9,7 @@ app.get("/", (req, res, next) => {
 });
 
 // defining routes
+app.use("/auth", require("./routes/auth"));
 app.use("/api/notes", require("./routes/notes"));
 
 // connecting mongodb
