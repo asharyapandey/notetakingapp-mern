@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
+import Header from "./components/Header";
 import Input from "./components/Input";
 import NoteList from "./components/NoteList";
 
 function MainPage() {
 	const [notes, setNotes] = useState([]);
+	const [error, setError] = useState("");
 
 	const addToNotes = (data) => {
 		fetch("/api/notes", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
+				"auth-token": localStorage.getItem("token"),
 			},
 			body: JSON.stringify(data),
 		})
@@ -24,6 +27,7 @@ function MainPage() {
 			method: "PUT",
 			headers: {
 				"Content-Type": "application/json",
+				"auth-token": localStorage.getItem("token"),
 			},
 			body: JSON.stringify(data),
 		})
@@ -47,6 +51,7 @@ function MainPage() {
 			method: "DELETE",
 			headers: {
 				"Content-Type": "application/json",
+				"auth-token": localStorage.getItem("token"),
 			},
 			body: JSON.stringify({ _id: id }),
 		})
@@ -59,16 +64,26 @@ function MainPage() {
 			.catch((err) => console.log(err));
 	};
 
-	// useEffect(() => {
-	// 	(async () => {
-	// 		let data = await fetch("/api/notes");
-	// 		data = await data.json();
-	// 		setNotes(data);
-	// 	})();
-	// }, []);
+	useEffect(() => {
+		(async () => {
+			let data = await fetch("/api/notes", {
+				headers: {
+					"auth-token": localStorage.getItem("token"),
+				},
+			});
+			data = await data.json();
+			if (data.msg) setError(data.msg);
+			else setNotes(data);
+		})();
+	}, []);
+
+	if (error !== "") {
+		return <h1>{error}</h1>;
+	}
 
 	return (
 		<div className="App">
+			<Header />
 			<Input addToNotes={addToNotes} />
 			<NoteList
 				notes={notes}
