@@ -1,19 +1,23 @@
 import React, { useState, useEffect } from "react";
+import { useContext } from "react";
 import "./App.css";
 import Header from "./components/Header";
 import Input from "./components/Input";
 import NoteList from "./components/NoteList";
+import { UserContext } from "./contexts/UserContext";
 
-function MainPage() {
+function MainPage({ history }) {
 	const [notes, setNotes] = useState([]);
 	const [error, setError] = useState("");
+	const [status, setStatus] = useState("loading");
+	const { getToken } = useContext(UserContext);
 
 	const addToNotes = (data) => {
 		fetch("/api/notes", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
-				"auth-token": localStorage.getItem("token"),
+				"auth-token": getToken(),
 			},
 			body: JSON.stringify(data),
 		})
@@ -72,26 +76,38 @@ function MainPage() {
 				},
 			});
 			data = await data.json();
-			if (data.msg) setError(data.msg);
-			else setNotes(data);
+			console.log(data);
+			if (data.msg) {
+				setError(data.msg);
+				setStatus("failed");
+			} else {
+				setNotes(data);
+				setStatus("success");
+				setError("");
+			}
 		})();
 	}, []);
 
-	if (error !== "") {
-		return <h1>{error}</h1>;
+	if (status === "loading") {
+		return <h1>{status}</h1>;
 	}
 
-	return (
-		<div className="App">
-			<Header />
-			<Input addToNotes={addToNotes} />
-			<NoteList
-				notes={notes}
-				deleteNotes={deleteNotes}
-				updateNotes={updateNotes}
-			/>
-		</div>
-	);
+	if (status === "failed")
+		return <h1>The request has failed please reload the page {error}</h1>;
+
+	if (status === "success") {
+		return (
+			<div className="App">
+				<Header history={history} />
+				<Input addToNotes={addToNotes} />
+				<NoteList
+					notes={notes}
+					deleteNotes={deleteNotes}
+					updateNotes={updateNotes}
+				/>
+			</div>
+		);
+	}
 }
 
 export default MainPage;

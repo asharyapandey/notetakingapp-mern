@@ -1,17 +1,20 @@
 import React from "react";
 import "./Header.css";
 import { UserContext } from "../contexts/UserContext";
+import { useHistory } from "react-router-dom";
 
 function Header() {
-	const { user } = React.useContext(UserContext);
+	const { userState, logout } = React.useContext(UserContext);
+	const history = useHistory();
 
 	const handleClick = () => {
-		localStorage.removeItem("token");
+		logout();
+		history.push("/login");
 	};
 
 	return (
 		<div className="header">
-			<h4>{user.username}</h4>
+			<h4>{userState.userInfo.username}</h4>
 			<button onClick={handleClick} className="logout-button">
 				Logout
 			</button>

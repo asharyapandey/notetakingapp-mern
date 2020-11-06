@@ -1,11 +1,13 @@
 import React, { useState, useContext } from "react";
 import "./Login.css";
 import { UserContext } from "../contexts/UserContext";
+import { useHistory } from "react-router-dom";
 
-function Login({ history }) {
+function Login() {
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
-	const { setUser } = useContext(UserContext);
+	const { setUserInfo } = useContext(UserContext);
+	const history = useHistory();
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -21,14 +23,14 @@ function Login({ history }) {
 			if (data.error) {
 				console.log("error ayexa", data);
 			} else {
-				history.push("/");
-				setUser(data.user);
-				localStorage.setItem("token", data.token);
+				history.replace("/");
+				setUserInfo(data.token, data.user);
 			}
 		} catch (err) {
 			console.log(err);
 		}
 	};
+
 	return (
 		<div className="Login">
 			<h1>Login</h1>
@@ -55,6 +57,11 @@ function Login({ history }) {
 				<button type="submit" className="button">
 					Login
 				</button>
+				<p>
+					Click{" "}
+					<span onClick={() => history.push("/register")}>Here</span>{" "}
+					to register.
+				</p>
 			</form>
 		</div>
 	);

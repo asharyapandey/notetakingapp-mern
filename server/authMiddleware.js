@@ -4,8 +4,9 @@ const TOKEN_KEY = require("./keys").TOKEN;
 
 function auth(req, res, next) {
 	const token = req.header("auth-token");
+	console.log(token);
 
-	if (!token) res.status(401).json({ msg: "error! token not found" });
+	if (!token) return res.status(401).json({ msg: "error! token not found" });
 
 	try {
 		const decoded = jwt.verify(token, TOKEN_KEY);
