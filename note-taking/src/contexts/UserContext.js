@@ -12,7 +12,6 @@ const UserProvider = ({ children }) => {
 	});
 
 	const isAuth = () => {
-		console.log(!userState.token);
 		return userState.token != null;
 	};
 

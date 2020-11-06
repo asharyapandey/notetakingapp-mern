@@ -23,8 +23,8 @@ function Login() {
 			if (data.error) {
 				console.log("error ayexa", data);
 			} else {
-				history.replace("/");
 				setUserInfo(data.token, data.user);
+				history.replace("/");
 			}
 		} catch (err) {
 			console.log(err);

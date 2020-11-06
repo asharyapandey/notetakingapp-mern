@@ -29,24 +29,31 @@ function App() {
 	// 		}
 	// 	})();
 	// }, [setUser]);
-	return (
-		<div>
-			<Router>
-				<Switch>
-					<Route
-						path="/"
-						exact
-						render={() =>
-							isAuth() ? <MainPage /> : <Redirect to="/login" />
-						}
-					/>
-					<Route path="/login" exact component={PageSkeleton} />
-					<Route path="/register" exact component={PageSkeleton} />
-					{/* <PrivateRoute exact path="/" component={MainPage} /> */}
-				</Switch>
-			</Router>
-		</div>
-	);
+	return isAuth() ? <ProtectedRoutes /> : <Routes />;
 }
+
+const ProtectedRoutes = () => {
+	return (
+		<Router>
+			<Switch>
+				<Route path="/" exact component={MainPage} />
+			</Switch>
+		</Router>
+	);
+};
+
+const Routes = () => {
+	return (
+		<Router>
+			<Switch>
+				<Route path="/" exact>
+					<Redirect to={"/login"} />
+				</Route>
+				<Route path="/login" exact component={PageSkeleton} />
+				<Route path="/register" exact component={PageSkeleton} />
+			</Switch>
+		</Router>
+	);
+};
 
 export default App;
